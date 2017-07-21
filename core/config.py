@@ -85,12 +85,12 @@ class Config(object):
 		except:
 			raise KeyError("[Production_server] and its related data might be missing from config.ini")
 		
-		self.production_server_enable = self.__toBoolean(server.get('enable'))
-		self.production_server_hostname = server.get('hostname');
-		self.production_server_port = server.get('port')
-		self.production_server_username = server.get('username')
-		self.production_server_password = server.get('password')
-		self.production_server_timeout = server.get('timeout')
+		self.production_server_enable = self.__toBoolean(self.config_get(server,'enable'))
+		self.production_server_hostname = self.config_get(server,'hostname');
+		self.production_server_port = self.config_get(server,'port')
+		self.production_server_username = self.config_get(server,'username')
+		self.production_server_password = self.config_get(server,'password')
+		self.production_server_timeout = self.config_get(server,'timeout')
 
 		self.__checkProductionSetup()
 
@@ -103,12 +103,17 @@ class Config(object):
 		except:
 			raise KeyError("[Production_database_server] and its related data might be missing from config.ini")
 
-		self.production_database_enable = self.__toBoolean(server.get('enable'))
-		self.production_database_server_hostname = server.get('hostname');
-		self.production_database_server_port = server.get('port')
-		self.production_database_server_username = server.get('username')
-		self.production_database_server_password = server.get('password')
-		self.production_database_server_timeout = server.get('timeout')
+		self.production_database_enable = self.__toBoolean(self.config_get(server,'enable'))
+		self.production_database_hostname = self.config_get(server,'hostname')
+		self.production_database_port = self.config_get(server,'port')
+		self.production_database_username = self.config_get(server,'username')
+		self.production_database_password = self.config_get(server,'password')
+		self.production_database_timeout = self.config_get(server,'timeout')
+
+		self.__checkProductionDatabaseSetup()
+
+	def config_get(self,array,value):
+		return self.strip_quotes(array.get(value))
 
 
 	def configure_sandbox_server(self,config):
@@ -118,25 +123,41 @@ class Config(object):
 		except:
 			raise KeyError("[Sandbox_server] and its related data might be missing from config.ini")
 		
-		self.sandbox_server_enable = self.__toBoolean(server.get('enable'))
-		self.sandbox_server_hostname = server.get('hostname');
-		self.sandbox_server_port = server.get('port')
-		self.sandbox_server_username = server.get('username')
-		self.sandbox_server_password = server.get('password')
-		self.sandbox_server_timeout = server.get('timeout')
+		self.sandbox_server_enable = self.__toBoolean(self.config_get(server,'enable'))
+		self.sandbox_server_hostname = self.config_get(server,'hostname')
+		self.sandbox_server_port = self.config_get(server,'port')
+		self.sandbox_server_username = self.config_get(server,'username')
+		self.sandbox_server_password = self.config_get(server,'password')
+		self.sandbox_server_timeout = self.config_get(server,'timeout')
 
 
+	def strip_quotes(self,s):
+		single_quote = "'"
+		double_quote = '"'
+
+		if s.startswith(single_quote) and s.endswith(single_quote):
+			s = s.strip(single_quote)
+		elif s.startswith(double_quote) and s.endswith(double_quote):
+			s = s.strip(double_quote)
+
+		return s
 
 	def __toBoolean(self,string):
 		
 		string = string.lower()
-		
+		if string == "true":
+			return True
+		elif string=="false":
+			return False
+
+		raise ValueError("string passed to __toBoolean can only be one of those {True,true,False,false}")
 
 
 	def __checkProductionSetup(self):
 		if self.production_server_enable == True:
 			print("Checking production server configuration....")
 			print("------------------------------------------")
+			print("Production server backup enabled")
 			if self.production_server_hostname:
 				print("production server hostname OK")
 			else:
@@ -147,6 +168,56 @@ class Config(object):
 					print("production server port ok")
 				except:
 					print("Production server port invalid")
+			else:
+				print("Production server port invalid")
+
+			if self.production_server_username:
+				print("Production server username ok")
+			else:
+				print("Production server username invalid")
+
+			if self.production_server_password:
+				print("Production server password ok")
+			else:
+				print("Production server password invalid")
+
+			if self.production_server_timeout:
+				print("Production server timeout ok")
+			else:
+				print("Production server timeout invalid")
+
+	def __checkProductionDatabaseSetup(self):
+		if self.production_database_enable == True:
+			print("\nChecking production server configuration....")
+			print("------------------------------------------")
+			print("Production database server backup enabled")
+			if self.production_database_hostname:
+				print("production database server hostname OK")
+			else:
+				print("production database server hostname invalid")
+			if self.production_database_port:
+				try:
+					self.production_database_port = int(self.production_database_port)
+					print("production database server port ok")
+				except:
+					print("Production database server port invalid")
+			else:
+				print("Production database server port invalid")
+
+			if self.production_database_username:
+				print("Production database server username ok")
+			else:
+				print("Production database server username invalid")
+
+			if self.production_database_password:
+				print("Production database server password ok")
+			else:
+				print("Production server password invalid")
+
+			if self.production_database_timeout:
+				print("Production database server timeout ok")
+			else:
+				print("Production database server timeout invalid")
 
 
 
