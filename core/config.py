@@ -32,6 +32,8 @@ class Config(object):
 		self.log_size_limit = None
 		self.log_file_limit = None
 
+		self.allowNoPasswordDatabase = True
+
 
 	# convert human sizes to bytes
 	def convert_bytes(self,byts):
@@ -76,6 +78,9 @@ class Config(object):
 		self.configure_production_database(config)
 
 		self.configure_sandbox_server(config)
+
+	def allowNoPasswordDatabase(boolean):
+		elf.allowNoPasswordDatabase = boolean
 
 
 	def configure_production_server(self,config):
@@ -214,7 +219,8 @@ class Config(object):
 			if self.production_database_password:
 				print("Production database server password ok")
 			else:
-				print("Production server password invalid")
+				if self.allowNoPasswordDatabase==False:
+					print("Production server password invalid")
 
 			if self.production_database_timeout:
 				print("Production database server timeout ok")
