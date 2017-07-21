@@ -130,6 +130,8 @@ class Config(object):
 		self.sandbox_server_password = self.config_get(server,'password')
 		self.sandbox_server_timeout = self.config_get(server,'timeout')
 
+		self.__checkSandboxDatabaseSetup()
+
 
 	def strip_quotes(self,s):
 		single_quote = "'"
@@ -188,7 +190,7 @@ class Config(object):
 
 	def __checkProductionDatabaseSetup(self):
 		if self.production_database_enable == True:
-			print("\nChecking production server configuration....")
+			print("\nChecking production database server configuration....")
 			print("------------------------------------------")
 			print("Production database server backup enabled")
 			if self.production_database_hostname:
@@ -218,6 +220,39 @@ class Config(object):
 				print("Production database server timeout ok")
 			else:
 				print("Production database server timeout invalid")
+
+	def __checkSandboxDatabaseSetup(self):
+		if self.sandbox_server_enable == True:
+			print("\nChecking sandbox server configuration....")
+			print("------------------------------------------")
+			print("Sandbox server backup enabled")
+			if self.sandbox_server_hostname:
+				print("Sandbox server hostname OK")
+			else:
+				print("Sandbox server hostname invalid")
+			if self.sandbox_server_port:
+				try:
+					self.sandbox_server_port = int(self.sandbox_server_port)
+					print("Sandbox server port ok")
+				except:
+					print("Sandbox server port invalid")
+			else:
+				print("Sandbox server port invalid")
+
+			if self.sandbox_server_username:
+				print("Sandbox server username ok")
+			else:
+				print("Sandbox server username invalid")
+
+			if self.sandbox_server_password:
+				print("Sandbox server password ok")
+			else:
+				print("Sandbox password invalid")
+
+			if self.sandbox_server_timeout:
+				print("Sandbox server timeout ok")
+			else:
+				print("Sandbox server timeout invalid")
 
 
 
